@@ -1,6 +1,5 @@
 from itertools import combinations
 import networkx as nx
-N = 6
 
 def findMinimalDominatingSet(g):
     k = len(g)
@@ -10,9 +9,13 @@ def findMinimalDominatingSet(g):
                 return c
     return {}
 
-import sys
-for n in range(2,114):
-    g = nx.circular_ladder_graph(n)
-    s = findMinimalDominatingSet(g)
-    print(n, len(s), s)
-    sys.stdout.flush()
+for (name, fn) in [('Path Graph', nx.path_graph),
+                 ('Cycle Graph', nx.cycle_graph),
+                 ('Complete Graph', nx.complete_graph),
+                 ('Circular Ladder Graph', nx.circular_ladder_graph)]:
+    
+    print(name)
+    for n in range(2, 13):
+        g = fn(n)
+        s = findMinimalDominatingSet(g)
+        print('    ', n, len(s), s)
