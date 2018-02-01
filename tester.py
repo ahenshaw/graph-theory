@@ -25,7 +25,8 @@ def findMaximumIndependentSet(G):
 
 
 for title, find_fn in [('Maximum Independent Set', findMaximumIndependentSet),
-                       ('Minimum Vertex Cover', findMinimalVertexCover),
+                       ('Minimal Vertex Cover', findMinimalVertexCover),
+                       ('Minimal Dominating Set', findMinimalDominatingSet)
                        ]:
     print(title)
     for name, fn in [('Path Graph', nx.path_graph),
@@ -41,10 +42,10 @@ for title, find_fn in [('Maximum Independent Set', findMaximumIndependentSet),
             print('        n={:2}:  {:2}  {}'.format(n, len(s), s))
         print()
 
-    print('\nComplete Bipartite')
+    print('    Complete Bipartite')
     for m in range(2, 7):
         for n in range(2, 7):
             g = nx.complete_bipartite_graph(m, n)
             s = find_fn(g)
-            print('    m={} n={}:  {:2}  {}'.format(m, n, len(s), s))
+            print('        m={} n={}:  {:2}  {}'.format(m, n, len(s), s))
     print()
