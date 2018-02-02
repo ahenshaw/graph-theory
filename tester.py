@@ -1,30 +1,9 @@
-from itertools import combinations
 import networkx as nx
-
-from vertexcover import findMinimalVertexCover
-from dominating  import findMinimalDominatingSet
-
-def is_independent_set(G, s):
-    edges = set()
-    for v in s:
-        these_edges = [tuple(sorted((a,b))) for a, b in G.edges([v])]
-        if edges.intersection(these_edges):
-            return False
-        else:
-            edges.update(these_edges)
-    return True
+from findset import findMinimalVertexCover, findMinimalDominatingSet, findMaximumIndependentSet
 
 
-def findMaximumIndependentSet(G):
-    k = len(g)
-    for i in range(k-1, 0, -1):
-        for c in combinations(range(k), i):
-            if is_independent_set(g, c):
-                return c
-    return {}
-
-
-for title, find_fn in [('Maximum Independent Set', findMaximumIndependentSet),
+for title, find_fn in [('Maximal Matching', nx.maximal_matching),
+                       ('Maximum Independent Set', findMaximumIndependentSet),
                        ('Minimal Vertex Cover', findMinimalVertexCover),
                        ('Minimal Dominating Set', findMinimalDominatingSet)
                        ]:
