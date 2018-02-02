@@ -17,7 +17,7 @@ def is_independent_set(G, s):
 
 def findMaximumIndependentSet(G):
     k = len(g)
-    for i in range(k-1, 1, -1):
+    for i in range(k-1, 0, -1):
         for c in combinations(range(k), i):
             if is_independent_set(g, c):
                 return c
