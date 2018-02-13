@@ -37,7 +37,7 @@ class Board:
             self.edges.add((v,v))
 
     def sas(self):
-        print('data knights_{}_{};\ninput from $ to $;\ndatalines;'.format(R,C))
+        print('data knights_{}_{};\ninput from $ to $;\ndatalines;'.format(self.rows, self.cols))
         for (a, b), (c,d) in sorted(self.edges):
             print('{}_{} {}_{}'.format(a+1,b+1,c+1,d+1))
         print(';')
@@ -59,7 +59,6 @@ class Board:
 
 
 if __name__ == '__main__':
-    R = C = 4
-    board = Board(R, C)
+    board = Board(5, 6)
     board.sas()
     board.plot()
