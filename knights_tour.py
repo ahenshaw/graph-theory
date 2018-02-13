@@ -1,7 +1,12 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+from itertools import product
+
 class Board:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
+        self.generate()
  
     def vertices(self):
         for r in range(self.rows):
@@ -18,18 +23,43 @@ class Board:
                 yield y, x
 
     def generate(self):
-        edges = set()
+        self.edges = set()
+        all_v = set()
         for v1 in self.vertices():
+            all_v.add(v1)
             for v2 in self.legal(*v1):
-                edges.add(tuple(sorted((v1, v2))))
-        return sorted(edges)
+                all_v.discard(v1)
+                all_v.discard(v2)
+                self.edges.add(tuple(sorted((v1, v2))))
+
+        # process nodes with no neighbors
+        for v in all_v:
+            self.edges.add((v,v))
+
+    def sas(self):
+        print('data knights_{}_{};\ninput from $ to $;\ndatalines;'.format(R,C))
+        for (a, b), (c,d) in sorted(self.edges):
+            print('{}_{} {}_{}'.format(a+1,b+1,c+1,d+1))
+        print(';')
+
+    def plot(self):
+        g = nx.Graph()
+        pos = {}
+        for (r1, c1), (r2, c2) in self.edges:
+            u = '{},{}'.format(r1+1, c1+1)
+            v = '{},{}'.format(r2+1, c2+1)
+            g.add_edge(u,v)
+            pos[u]=(c1, r1)
+            pos[v]=(c2, r2)
 
 
-R = C = 3
-print('data knights_{}_{};\ninput from $ to $;\ndatalines;'.format(R,C))
+        nx.draw(g, pos=pos, node_color="orange")
+        # nx.draw_networkx_labels(g, pos)
+        plt.show()
 
-board = Board(R, C)
-for (a, b), (c,d) in board.generate():
-    print('{}_{} {}_{}'.format(a+1,b+1,c+1,d+1))
 
-print(';')
+if __name__ == '__main__':
+    R = C = 4
+    board = Board(R, C)
+    board.sas()
+    board.plot()
