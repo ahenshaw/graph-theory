@@ -71,6 +71,8 @@ class DotPanel(wx.TextCtrl):
         self.drop = Dropper(self)
         self.SetDropTarget(self.drop)
         self.Bind(wx.EVT_TEXT, self.OnText)
+        self.layout = 'circo'
+        pub.subscribe(self.OnLayout, 'Layout')
 
     def OnText(self, event):
         edges = self.GetValue().split()
@@ -79,15 +81,21 @@ class DotPanel(wx.TextCtrl):
 
         dot = nx.drawing.nx_pydot.to_pydot(g)
         dot.set('dpi', 300)
+        dot.set('overlap', 'scalexy')
+        dot.set('splines', 'true')
+        #dot.set('sep', '+1.0')
 
         temp = tempfile.NamedTemporaryFile(suffix='.png')
         temp.close()
-        dot.write_png(temp.name)
+        dot.write_png(temp.name, prog=self.layout)
         image = wx.Image()
         image.LoadFile(temp.name)
         os.remove(temp.name)
         pub.sendMessage('NewImage', image=image)
-        
+
+    def OnLayout(self, layout):
+        self.layout = layout
+        self.OnText(None)        
 
 
 class MainPanel(wx.Panel):
@@ -129,7 +137,21 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onExit, mi_exit)
 
         menubar.Append(file_menu, "&File")
+
+        # Layout Menu
+        layout_menu = wx.Menu()
         
+        mi_circo = layout_menu.AppendRadioItem(-1, 'circo')
+        mi_dot   = layout_menu.AppendRadioItem(-1, 'dot')
+        mi_fdp   = layout_menu.AppendRadioItem(-1, 'fdp')
+        mi_neato = layout_menu.AppendRadioItem(-1, 'neato')
+        mi_sfdp  = layout_menu.AppendRadioItem(-1, 'sfdp')
+        mi_twopi = layout_menu.AppendRadioItem(-1, 'twopi')
+         
+        menubar.Append(layout_menu, '&Layout')
+        for choice in [mi_circo, mi_dot, mi_fdp, mi_neato, mi_sfdp, mi_twopi]:
+            self.Bind(wx.EVT_MENU, self.onLayout, choice)
+
         # Help Menu
         help_menu = wx.Menu()
         
@@ -144,7 +166,7 @@ class MainFrame(wx.Frame):
     def onExit(self, event):
         self.Close()
 
-    def onAbout(self, evt):
+    def onAbout(self, event):
         info = wx.adv.AboutDialogInfo()
         info.SetName(FANCY_APP_NAME)
         info.SetVersion(VERSION)
@@ -153,6 +175,11 @@ class MainFrame(wx.Frame):
         info.SetCopyright('2017')
         
         wx.adv.AboutBox(info)        
+
+    def onLayout(self, event):
+        item = self.GetMenuBar().FindItemById(event.GetId())
+        text = item.GetText()
+        pub.sendMessage('Layout', layout=text)
         
 
 def main():
