@@ -5,6 +5,8 @@ def draw_from_edges(edges, layout='s'):
     edges =edges.split()
     edges = list(zip(*[edges[i::2] for i in range(2)]))
     g = nx.from_edgelist(edges)
+    return g
+
     layout_fn = nx.spring_layout
     if layout == 'c':
         layout_fn = nx.circular_layout
@@ -14,8 +16,7 @@ def draw_from_edges(edges, layout='s'):
     pos = layout_fn(g)    
     nx.draw(g, pos, node_color="orange")
     nx.draw_networkx_labels(g, pos)
-    return g
-
+ 
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -29,5 +30,7 @@ W5b W5c
 W5c W5d
 W5d W5a
 '''
-    draw_from_edges(edges, 's')
-    plt.show()
+    g = draw_from_edges(edges, 's')
+    #plt.show()
+    dot = nx.drawing.nx_pydot.to_pydot(g)
+    dot.write_png('temp.png')
